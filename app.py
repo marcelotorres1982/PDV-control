@@ -210,7 +210,7 @@ def novo_checkin():
             cols = st.columns(3)
             for idx, file in enumerate(uploaded_files):
                 with cols[idx % 3]:
-                    st.image(file, caption=file.name, use_column_width=True)
+                    st.image(file, caption=file.name, use_container_width=True)
     
     # Botão de confirmação
     st.markdown("---")
