@@ -1,5 +1,6 @@
 """
 Módulo de integração com Google Drive e Google Sheets
+Funciona localmente e no Streamlit Cloud
 """
 
 from google.oauth2.credentials import Credentials
@@ -9,6 +10,8 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload
 import pickle
 import os
+import json
+import streamlit as st
 from pathlib import Path
 from config import DRIVE_FOLDER_NAME, SHEET_NAME
 from io import BytesIO
@@ -29,12 +32,51 @@ class GoogleIntegration:
         self.main_folder_id = None
         self.spreadsheet_id = None
         
+    def _load_credentials_json(self):
+        """
+        Carrega o arquivo credentials.json do local correto
+        Funciona tanto localmente quanto no Streamlit Cloud
+        """
+        # Tenta carregar do Streamlit Secrets (Streamlit Cloud)
+        if hasattr(st, 'secrets') and 'web' in st.secrets:
+            st.info("🔐 Usando credentials do Streamlit Cloud")
+            return {
+                "web": {
+                    "client_id": st.secrets.web.client_id,
+                    "project_id": st.secrets.web.project_id,
+                    "auth_uri": st.secrets.web.auth_uri,
+                    "token_uri": st.secrets.web.token_uri,
+                    "auth_provider_x509_cert_url": st.secrets.web.auth_provider_x509_cert_url,
+                    "client_secret": st.secrets.web.client_secret,
+                    "redirect_uris": list(st.secrets.web.redirect_uris)
+                }
+            }
+        
+        # Fallback: carrega do arquivo local
+        credentials_path = Path('credentials/credentials.json')
+        if credentials_path.exists():
+            st.info("📁 Usando credentials locais")
+            with open(credentials_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        
+        # Se não encontrou em nenhum lugar
+        st.error("""
+        ❌ **Erro: Arquivo credentials.json não encontrado!**
+        
+        **Para rodar localmente:**
+        - Coloque o arquivo `credentials.json` na pasta `credentials/`
+        
+        **Para o Streamlit Cloud:**
+        - Vá em Settings → Secrets
+        - Configure as credenciais no formato TOML
+        """)
+        st.stop()
+        
     def authenticate(self):
         """Autentica com Google OAuth"""
         token_path = Path('credentials/token.pickle')
-        credentials_path = Path('credentials/credentials.json')
         
-        # Carrega credenciais salvas
+        # Carrega credenciais salvas do token
         if token_path.exists():
             with open(token_path, 'rb') as token:
                 self.creds = pickle.load(token)
@@ -42,21 +84,51 @@ class GoogleIntegration:
         # Se não há credenciais válidas, faz login
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
-                self.creds.refresh(Request())
-            else:
-                if not credentials_path.exists():
-                    raise FileNotFoundError(
-                        "Arquivo credentials.json não encontrado! "
-                        "Coloque-o na pasta credentials/"
-                    )
+                try:
+                    self.creds.refresh(Request())
+                except Exception as e:
+                    st.warning(f"⚠️ Erro ao renovar token: {e}")
+                    self.creds = None
+            
+            # Se ainda não tem credenciais, faz novo login
+            if not self.creds:
+                # Carrega credentials.json do local correto
+                credentials_dict = self._load_credentials_json()
                 
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials/credentials.json', 
-                    scopes=SCOPES,
-                    redirect_uri='http://localhost:8080/'
-                )
-                # CORREÇÃO: atribuir a self.creds em vez de creds
-                self.creds = flow.run_local_server(port=8080, open_browser=True)
+                # Cria arquivo temporário para o flow (necessário para InstalledAppFlow)
+                temp_creds_path = Path('credentials/temp_credentials.json')
+                temp_creds_path.parent.mkdir(exist_ok=True)
+                with open(temp_creds_path, 'w', encoding='utf-8') as f:
+                    json.dump(credentials_dict, f)
+                
+                try:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        str(temp_creds_path), 
+                        scopes=SCOPES,
+                        redirect_uri='http://localhost:8080/'
+                    )
+                    
+                    # Verifica se está no Streamlit Cloud
+                    is_cloud = hasattr(st, 'secrets') and 'web' in st.secrets
+                    
+                    if is_cloud:
+                        st.warning("""
+                        ⚠️ **Autenticação necessária**
+                        
+                        No Streamlit Cloud, você precisa:
+                        1. Rodar localmente primeiro para gerar o token
+                        2. Fazer upload do `token.pickle` para o repositório (em local seguro)
+                        
+                        Ou use Service Account ao invés de OAuth (recomendado para produção).
+                        """)
+                        st.stop()
+                    else:
+                        st.info("🔓 Abrindo navegador para autenticação...")
+                        self.creds = flow.run_local_server(port=8080, open_browser=True)
+                finally:
+                    # Remove arquivo temporário
+                    if temp_creds_path.exists():
+                        temp_creds_path.unlink()
             
             # Salva as credenciais
             token_path.parent.mkdir(exist_ok=True)
