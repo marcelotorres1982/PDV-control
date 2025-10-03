@@ -1,0 +1,103 @@
+# PDV Control - Arquivos e Diretórios Ignorados
+
+# Credenciais e Tokens
+credentials/
+*.json
+!requirements.json
+token.pickle
+*.pickle
+
+# Dados e Backups
+data/
+backups/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS
+Thumbs.db
+.DS_Store
+*.bak
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Arquivos de configuração local
+config_local.py
+settings_local.py
+
+# Uploads temporários
+uploads/
+temp_uploads/
+
+# Exports
+exports/
+*.csv
+*.xlsx
+*.pdf
+
+# Documentation builds
+docs/_build/
+site/

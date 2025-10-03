@@ -1,0 +1,37 @@
+# PDV Control - Dependências do Projeto
+
+# Framework Web
+streamlit>=1.28.0
+
+# Google APIs
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+google-api-python-client>=2.100.0
+
+# Manipulação de Dados
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Manipulação de Imagens
+Pillow>=10.0.0
+
+# Utilitários
+python-dateutil>=2.8.2
+pytz>=2023.3
+
+# Opcional: Para análise de dados
+plotly>=5.17.0
+altair>=5.1.0
+
+# Opcional: Para exportação de relatórios
+openpyxl>=3.1.2
+xlsxwriter>=3.1.9
+
+# Opcional: Para geração de PDF
+reportlab>=4.0.0
+
+# Desenvolvimento (opcional)
+pytest>=7.4.0
+black>=23.9.0
+flake8>=6.1.0
