@@ -314,10 +314,6 @@ class GoogleIntegration:
     def add_to_sheet(self, registro):
         """Adiciona um registro à planilha do Google Sheets"""
         try:
-            # Debug: mostra o que está sendo enviado
-            st.info(f"📝 Preparando registro para salvar...")
-            st.write("Conteúdo do registro:", registro)
-            
             # Garante que fotos é uma lista e filtra valores None
             fotos = registro.get('fotos', [])
             if fotos:
@@ -335,11 +331,8 @@ class GoogleIntegration:
                 fotos_links
             ]]
             
-            st.info(f"📊 Dados formatados: {values[0][:4]}...")  # Mostra primeiros 4 campos
-            
             body = {'values': values}
             
-            # Tenta adicionar à planilha
             result = self.sheets_service.spreadsheets().values().append(
                 spreadsheetId=self.spreadsheet_id,
                 range='Registros!A:H',
@@ -347,16 +340,12 @@ class GoogleIntegration:
                 body=body
             ).execute()
             
-            st.success(f"✅ Registro adicionado! Linhas atualizadas: {result.get('updates', {}).get('updatedRows', 0)}")
-            st.write(f"🔗 Link da planilha: {self.get_spreadsheet_url()}")
+            st.success(f"✅ Registro salvo com sucesso!")
             
             return True
             
         except Exception as e:
             st.error(f"❌ Erro ao adicionar registro à planilha: {e}")
-            st.error(f"Tipo de erro: {type(e).__name__}")
-            import traceback
-            st.code(traceback.format_exc())
             return False
 
     def get_spreadsheet_url(self):
