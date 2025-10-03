@@ -33,6 +33,19 @@ class GoogleIntegration:
         self.authenticate()
         self._setup_drive_structure()
 
+    def _load_token_from_secrets(self):
+        """Carrega token do Streamlit Secrets (para Streamlit Cloud)"""
+        try:
+            if hasattr(st, 'secrets') and 'google_token_base64' in st.secrets:
+                import base64
+                token_bytes = base64.b64decode(st.secrets['google_token_base64'])
+                self.credentials = pickle.loads(token_bytes)
+                st.info("🔐 Token carregado do Streamlit Secrets")
+                return True
+        except Exception as e:
+            st.warning(f"⚠️ Erro ao carregar token dos secrets: {e}")
+        return False
+
     def authenticate(self):
         """Autentica usando OAuth2 (funciona local e no Streamlit Cloud)"""
         try:
