@@ -49,14 +49,33 @@ class GoogleIntegration:
     def authenticate(self):
         """Autentica usando OAuth2 (funciona local e no Streamlit Cloud)"""
         try:
-            # Tenta carregar token existente
+            # PRIORIDADE 1: Tenta carregar do Streamlit Secrets (para Streamlit Cloud)
+            if self._load_token_from_secrets():
+                # Verifica se o token precisa ser renovado
+                if self.credentials.expired and self.credentials.refresh_token:
+                    try:
+                        self.credentials.refresh(Request())
+                        st.info("🔄 Token renovado automaticamente")
+                    except Exception as e:
+                        st.error(f"❌ Erro ao renovar token: {e}")
+                        st.info("Gere um novo token localmente e atualize o secret no Streamlit Cloud")
+                        st.stop()
+                
+                # Inicializa os serviços
+                self.drive_service = build('drive', 'v3', credentials=self.credentials)
+                self.sheets_service = build('sheets', 'v4', credentials=self.credentials)
+                st.success("✅ Conectado ao Google Drive e Sheets!")
+                return
+            
+            # PRIORIDADE 2: Se não encontrou nos secrets, tenta carregar token local
             token_path = Path('credentials/token.pickle')
             
             if token_path.exists():
                 with open(token_path, 'rb') as token:
                     self.credentials = pickle.load(token)
+                st.info("🔐 Token local carregado")
             
-            # Se não tem credenciais válidas
+            # PRIORIDADE 3: Se não tem credenciais válidas, precisa autenticar
             if not self.credentials or not self.credentials.valid:
                 if self.credentials and self.credentials.expired and self.credentials.refresh_token:
                     # Tenta renovar
@@ -67,9 +86,29 @@ class GoogleIntegration:
                         st.warning(f"⚠️ Erro ao renovar token: {e}")
                         self.credentials = None
                 
-                # Se ainda não tem credenciais, precisa autenticar
+                # Se ainda não tem credenciais, precisa autenticar localmente
                 if not self.credentials:
-                    # Verifica se existe credentials.json
+                    # Verifica se está no Streamlit Cloud
+                    if self._is_streamlit_cloud():
+                        st.error("❌ Não foi possível carregar credenciais no Streamlit Cloud!")
+                        st.warning("""
+                        **Como corrigir:**
+                        
+                        1. Execute localmente: `streamlit run app.py`
+                        2. Complete a autenticação
+                        3. Gere o token base64:
+                           ```bash
+                           base64 credentials/token.pickle
+                           ```
+                        4. Adicione ao Streamlit Secrets:
+                           ```toml
+                           google_token_base64 = "COLE_AQUI_O_TOKEN"
+                           ```
+                        5. Reinicie a aplicação no Streamlit Cloud
+                        """)
+                        st.stop()
+                    
+                    # Execução local - verifica se existe credentials.json
                     creds_path = Path('credentials/credentials.json')
                     if not creds_path.exists():
                         st.error("❌ Arquivo credentials/credentials.json não encontrado!")
@@ -84,31 +123,15 @@ class GoogleIntegration:
                         """)
                         st.stop()
                     
-                    # Fluxo de autenticação
+                    # Fluxo de autenticação local
                     flow = InstalledAppFlow.from_client_secrets_file(
                         str(creds_path), 
                         SCOPES
                     )
                     
-                    # Determina o método baseado no ambiente
-                    if self._is_streamlit_cloud():
-                        st.warning("""
-                        ⚠️ **Execução no Streamlit Cloud detectada**
-                        
-                        Para autenticação OAuth2 no Streamlit Cloud:
-                        1. Execute localmente primeiro: `streamlit run app.py`
-                        2. Complete a autenticação no navegador
-                        3. Faça upload do arquivo `credentials/token.pickle` gerado
-                        4. Adicione ao `.gitignore` para segurança
-                        
-                        **Alternativa:** Use Service Account com Shared Drive
-                        """)
-                        st.stop()
-                    else:
-                        # Execução local - abre navegador
-                        st.info("🔐 Abrindo navegador para autenticação...")
-                        self.credentials = flow.run_local_server(port=8080)
-                        st.success("✅ Autenticação concluída!")
+                    st.info("🔐 Abrindo navegador para autenticação...")
+                    self.credentials = flow.run_local_server(port=8080)
+                    st.success("✅ Autenticação concluída!")
                     
                     # Salva o token para futuras execuções
                     token_path.parent.mkdir(parents=True, exist_ok=True)
