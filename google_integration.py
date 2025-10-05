@@ -377,6 +377,10 @@ class GoogleIntegration:
     def get_spreadsheet_url(self):
         """Retorna URL da planilha"""
         return f"https://docs.google.com/spreadsheets/d/{self.spreadsheet_id}"
+    
+    def get_drive_folder_url(self):
+        """Retorna URL da pasta do Drive"""
+        return f"https://drive.google.com/drive/folders/{self.main_folder_id}"
 
     def get_all_records_from_sheet(self):
         """Obtém todos os registros da planilha"""
