@@ -8,7 +8,7 @@ Sistema completo de gestão de check-ins para promotores de vendas, com integra�
 
 ## 🚀 Demo
 
-**Aplicação em produção:** [https://pdv-control.streamlit.app/](https://pdv-control.streamlit.app/)
+**Aplicação em produção:** [https://pdv-control.streamlit.app/](https://pdv-control-gsvhalx8a6hdhhtsgfa4wd.streamlit.app/)
 
 ## 📋 Sobre o Projeto
 
