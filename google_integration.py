@@ -123,14 +123,21 @@ class GoogleIntegration:
                         """)
                         st.stop()
                     
-                    # Fluxo de autenticação local
+                    # Fluxo de autenticação local COM refresh_token
                     flow = InstalledAppFlow.from_client_secrets_file(
                         str(creds_path), 
                         SCOPES
                     )
                     
                     st.info("🔐 Abrindo navegador para autenticação...")
-                    self.credentials = flow.run_local_server(port=8080)
+                    
+                    # IMPORTANTE: access_type='offline' força o Google a retornar refresh_token
+                    self.credentials = flow.run_local_server(
+                        port=8080,
+                        access_type='offline',
+                        prompt='consent'
+                    )
+                    
                     st.success("✅ Autenticação concluída!")
                     
                     # Salva o token para futuras execuções
@@ -138,6 +145,18 @@ class GoogleIntegration:
                     with open(token_path, 'wb') as token:
                         pickle.dump(self.credentials, token)
                     st.success("💾 Token salvo com sucesso!")
+                    
+                    # Verifica se tem refresh_token
+                    if not self.credentials.refresh_token:
+                        st.warning("""
+                        ⚠️ Token gerado sem refresh_token. 
+                        Ele vai expirar e precisará ser renovado manualmente.
+                        
+                        Para evitar isso no futuro:
+                        1. Revogue o acesso em: https://myaccount.google.com/permissions
+                        2. Delete o arquivo credentials/token.pickle
+                        3. Execute novamente a autenticação
+                        """)
             
             # Inicializa os serviços
             self.drive_service = build('drive', 'v3', credentials=self.credentials)
@@ -163,14 +182,14 @@ class GoogleIntegration:
             results = self.drive_service.files().list(
                 q=query, 
                 spaces='drive',
-                fields='files(id, name)'
+                fields='files(id, name, webViewLink)'
             ).execute()
             
             folders = results.get('files', [])
             
             if folders:
                 self.main_folder_id = folders[0]['id']
-                st.success(f"📁 Pasta '{DRIVE_FOLDER_NAME}' encontrada")
+                st.success(f"Pasta '{DRIVE_FOLDER_NAME}' encontrada")
             else:
                 folder_metadata = {
                     'name': DRIVE_FOLDER_NAME,
@@ -178,13 +197,13 @@ class GoogleIntegration:
                 }
                 folder = self.drive_service.files().create(
                     body=folder_metadata,
-                    fields='id'
+                    fields='id, webViewLink'
                 ).execute()
                 self.main_folder_id = folder.get('id')
-                st.success(f"📁 Pasta '{DRIVE_FOLDER_NAME}' criada")
+                st.success(f"Pasta '{DRIVE_FOLDER_NAME}' criada")
         
         except Exception as e:
-            st.error(f"❌ Erro ao configurar pasta: {e}")
+            st.error(f"Erro ao configurar pasta: {e}")
             st.stop()
         
         try:
@@ -193,14 +212,14 @@ class GoogleIntegration:
             results = self.drive_service.files().list(
                 q=query,
                 spaces='drive',
-                fields='files(id, name)'
+                fields='files(id, name, webViewLink)'
             ).execute()
             
             sheets = results.get('files', [])
             
             if sheets:
                 self.spreadsheet_id = sheets[0]['id']
-                st.success(f"📊 Planilha '{SHEET_NAME}' encontrada")
+                st.success(f"Planilha '{SHEET_NAME}' encontrada")
             else:
                 # Cria planilha
                 spreadsheet = {
@@ -237,10 +256,17 @@ class GoogleIntegration:
                     removeParents=previous_parents,
                     fields='id, parents'
                 ).execute()
-                st.success(f"📊 Planilha '{SHEET_NAME}' criada e movida para a pasta")
+                st.success(f"Planilha '{SHEET_NAME}' criada e movida para a pasta")
+            
+            # Exibe links permanentes
+            spreadsheet_url = self.get_spreadsheet_url()
+            folder_url = f"https://drive.google.com/drive/folders/{self.main_folder_id}"
+            
+            st.info(f"Planilha: {spreadsheet_url}")
+            st.info(f"Pasta Drive: {folder_url}")
                 
         except Exception as e:
-            st.error(f"❌ Erro ao configurar planilha: {e}")
+            st.error(f"Erro ao configurar planilha: {e}")
             st.stop()
     
     def _get_or_create_folder(self, folder_path):

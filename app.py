@@ -12,8 +12,7 @@ from io import BytesIO
 st.set_page_config(
     page_title="PDV Control",
     page_icon="📍",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # CSS customizado
