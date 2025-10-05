@@ -6,6 +6,7 @@ credentials/
 !requirements.json
 token.pickle
 *.pickle
+echo "config_data.json" >> .gitignore
 
 # Dados e Backups
 data/
