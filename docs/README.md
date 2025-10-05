@@ -1,269 +1,183 @@
-# 📍 PDV Control - Sistema de Controle de Promotores em PDV
+# 📍 PDV Control - Sistema de Gestão de Check-ins
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![Streamlit](https://img.shields.io/badge/streamlit-1.28+-red.svg)
+Sistema completo de gestão de check-ins para promotores de vendas, com integração ao Google Drive e Google Sheets.
 
-🚀 Sistema completo para gerenciamento de visitas de promotores em Pontos de Venda (PDV) com integração ao Google Drive e Google Sheets 📋 Funcionalidades • 🛠️ Instalação • 🎯 Como Usar • 📸 Screenshots • 🔑 Configuração • 🤝 Contribuição
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://pdv-control.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com)
 
----
+## 🚀 Demo
 
-## 🌟 Visão Geral
+**Aplicação em produção:** [https://pdv-control.streamlit.app/](https://pdv-control.streamlit.app/)
 
-O **PDV Control** é um sistema desenvolvido para facilitar o controle e gestão de visitas de promotores em pontos de venda. Com interface intuitiva construída em Streamlit, permite registro completo de check-ins, upload de fotos e sincronização automática com Google Drive e Google Sheets.
+## 📋 Sobre o Projeto
 
-### ✨ Por que escolher o PDV Control?
+O PDV Control foi desenvolvido para resolver o problema de registro e acompanhamento de visitas de promotores em pontos de venda. O sistema oferece:
 
-- 🎨 **Interface Moderna**: Design limpo e profissional inspirado no BarbeVibe
-- 📱 **Responsivo**: Funciona perfeitamente em qualquer dispositivo
-- ⚡ **Sincronização Automática**: Integração total com Google Drive e Sheets
-- 📸 **Upload de Fotos**: Armazenamento organizado por promotor e data
-- 💰 **Controle Financeiro**: Gerenciamento de valores de deslocamento
-- 📊 **Relatórios Automáticos**: Planilhas atualizadas em tempo real
-- 🔒 **100% Gratuito**: Open source e sem custos
+- ✅ **Check-in com geolocalização** - Registro automático da localização
+- 📸 **Upload múltiplo de fotos** - Armazenamento seguro no Google Drive
+- 📊 **Sincronização automática** - Dados salvos no Google Sheets em tempo real
+- 👥 **Gestão de promotores e PDVs** - Interface administrativa completa
+- 🔍 **Detecção de duplicados** - Identifica e remove check-ins duplicados
+- 💰 **Controle financeiro** - Rastreamento de valores de deslocamento
 
----
+## 🛠️ Tecnologias Utilizadas
 
-## 🚀 Funcionalidades
+- **Python 3.9+**
+- **Streamlit** - Framework para interface web
+- **Google Drive API** - Armazenamento de fotos
+- **Google Sheets API** - Banco de dados em nuvem
+- **OAuth2** - Autenticação segura
+- **SQLite** - Banco de dados local para cache
 
-### 📋 Registro de Check-in
+## 📦 Instalação
 
-✅ Nome do promotor  
-✅ Seleção de PDV  
-✅ Registro automático de horário de check-in  
-✅ Valor de deslocamento configurável  
-✅ Múltiplas entradas por promotor  
-✅ Validação de dados  
+### Pré-requisitos
 
-### 📸 Upload de Fotos
+- Python 3.9 ou superior
+- Conta Google (para Google Drive e Sheets)
+- Projeto no Google Cloud Console
 
-✅ Upload de múltiplas fotos do PDV  
-✅ Organização automática por promotor  
-✅ Separação por data de visita  
-✅ Armazenamento seguro no Google Drive  
-✅ Nomenclatura padronizada  
-
-### 📊 Integração Google
-
-✅ Salvamento automático no Google Sheets  
-✅ Atualização em tempo real  
-✅ Backup automático de fotos no Drive  
-✅ Estrutura de pastas organizada  
-✅ Histórico completo de visitas  
-
-### 📈 Visualização de Dados
-
-✅ Dashboard com estatísticas  
-✅ Histórico de visitas por promotor  
-✅ Relatórios por período  
-✅ Exportação de dados  
-
----
-
-## 🛠️ Instalação
-
-### 📋 Pré-requisitos
-
-- Python 3.8 ou superior
-- pip (gerenciador de pacotes do Python)
-- Conta Google (para Drive e Sheets)
-- Credenciais da API do Google Cloud
-
-### ⚡ Instalação Rápida
-
-**1. Clone o repositório**
+### Passo 1: Clonar o repositório
 
 ```bash
 git clone https://github.com/marcelotorres1982/pdv-control.git
 cd pdv-control
 ```
 
-**2. Instale as dependências**
+### Passo 2: Criar ambiente virtual
+
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+### Passo 3: Instalar dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. Configure as credenciais do Google**
+### Passo 4: Configurar Google Cloud
 
-- Acesse [Google Cloud Console](https://console.cloud.google.com/)
-- Crie um novo projeto
-- Ative as APIs: Google Drive API e Google Sheets API
-- Crie credenciais OAuth 2.0
-- Baixe o arquivo `credentials.json` e coloque na pasta do projeto
+1. Acesse o [Google Cloud Console](https://console.cloud.google.com/)
+2. Crie um novo projeto ou selecione um existente
+3. Ative as APIs:
+   - Google Drive API
+   - Google Sheets API
+4. Crie credenciais OAuth 2.0:
+   - Tipo: Desktop app
+   - Baixe o arquivo JSON
+5. Renomeie para `credentials.json` e coloque em `credentials/`
 
-**4. Execute o aplicativo**
+### Passo 5: Executar localmente
 
 ```bash
 streamlit run app.py
 ```
 
-**5. Acesse no navegador**
+## 🔐 Configuração para Streamlit Cloud
 
-```
-http://localhost:8501
-```
+### 1. Autenticar localmente primeiro
 
----
+Execute a aplicação localmente e complete a autenticação OAuth2:
 
-## 🎯 Como Usar
-
-### 🆕 Primeiro Uso
-
-1. Inicie o sistema com `streamlit run app.py`
-2. Acesse `http://localhost:8501` no seu navegador
-3. Faça login com sua conta Google (primeira vez)
-4. Configure os PDVs e promotores
-5. Comece a registrar visitas!
-
-### 📱 Interface Principal
-
-```
-📍 PDV Control - Sistema de Controle de Promotores
-│
-├── 📝 Novo Check-in
-│   ├── Nome do Promotor
-│   ├── Selecionar PDV
-│   ├── Valor do Deslocamento
-│   ├── Upload de Fotos
-│   └── Confirmar Check-in
-│
-├── 📊 Ver Registros
-│   ├── Por data específica
-│   ├── Por promotor
-│   └── Todos os registros
-│
-├── 📸 Galeria de Fotos
-│   ├── Por promotor
-│   ├── Por PDV
-│   └── Por data
-│
-└── ⚙️ Configurações
-    ├── Gerenciar PDVs
-    ├── Gerenciar Promotores
-    └── Configurar Google Drive
+```bash
+streamlit run app.py
 ```
 
----
+### 2. Gerar token base64
 
-## 📂 Estrutura do Projeto
+```bash
+# Linux/Mac
+base64 -w 0 credentials/token.pickle > token_base64.txt
+
+# Windows PowerShell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("credentials/token.pickle")) | Out-File -FilePath token_base64.txt -NoNewline
+```
+
+### 3. Configurar Secrets no Streamlit Cloud
+
+No painel do Streamlit Cloud, adicione em **Settings → Secrets**:
+
+```toml
+google_token_base64 = "COLE_O_TOKEN_AQUI"
+```
+
+## 📁 Estrutura do Projeto
 
 ```
 pdv-control/
-│
-├── 📄 app.py                    # Interface principal Streamlit
-├── 📄 database.py               # Gerenciamento de dados
-├── 📄 google_integration.py     # Integração com Google Drive/Sheets
-├── 📄 utils.py                  # Funções auxiliares
-├── 📄 config.py                 # Configurações do sistema
-├── 📄 requirements.txt          # Dependências do projeto
-├── 📄 README.md                 # Documentação
-├── 📄 .gitignore               # Arquivos ignorados pelo Git
-│
-├── 📁 credentials/
-│   └── 📄 credentials.json      # Credenciais Google (não versionado)
-│
-├── 📁 data/
-│   └── 📄 local_backup.json     # Backup local dos dados
-│
-└── 📁 assets/
-    └── 📷 screenshots/          # Capturas de tela
+├── app.py                      # Aplicação principal
+├── google_integration.py       # Integração com Google APIs
+├── database.py                 # Banco de dados local
+├── config.py                   # Configurações
+├── requirements.txt            # Dependências
+├── credentials/
+│   ├── credentials.json        # Credenciais OAuth2 (não commitar)
+│   └── token.pickle           # Token de acesso (não commitar)
+├── .streamlit/
+│   ├── config.toml            # Configurações do Streamlit
+│   └── secrets.toml           # Secrets locais (não commitar)
+└── README.md
 ```
 
----
+## 🎯 Funcionalidades
 
-## 🔑 Configuração
+### Check-in
+- Seleção de promotor e PDV
+- Valor de deslocamento configurável
+- Número de entradas
+- Upload de múltiplas fotos
+- Observações opcionais
 
-### 📊 Google Sheets
+### Visualização de Registros
+- Filtros por data, promotor e PDV
+- Estatísticas consolidadas
+- Detalhes completos de cada visita
+- Links para fotos no Drive
 
-O sistema cria automaticamente uma planilha com a seguinte estrutura:
+### Galeria de Fotos
+- Visualização organizada por promotor e data
+- Links diretos para Google Drive
+- Preview de todas as fotos
 
-| Data | Hora | Promotor | PDV | Valor Deslocamento | Link Fotos | Observações |
-|------|------|----------|-----|-------------------|------------|-------------|
+### Painel Administrativo
+- **Links:** Acesso rápido à planilha e pasta do Drive
+- **Promotores:** Adicionar e remover promotores
+- **PDVs:** Adicionar e remover pontos de venda
+- **Duplicados:** Detectar e remover check-ins duplicados
 
-### 📁 Estrutura no Google Drive
+## 🔒 Segurança
 
-```
-PDV Control/
-│
-├── 📁 Promotor 1/
-│   ├── 📁 2025-01-15/
-│   │   ├── 📷 PDV_A_001.jpg
-│   │   ├── 📷 PDV_A_002.jpg
-│   │   └── 📷 PDV_B_001.jpg
-│   └── 📁 2025-01-16/
-│
-├── 📁 Promotor 2/
-│   └── 📁 2025-01-15/
-│       └── 📷 PDV_C_001.jpg
-│
-└── 📄 registros_pdv.xlsx        # Planilha consolidada
-```
+- Autenticação OAuth2 com Google
+- Tokens criptografados
+- Acesso controlado via Google Account
+- Dados armazenados no Google Drive pessoal
 
-### ⚙️ Configurações Personalizadas
+## 📊 Google Sheets
 
-Edite o arquivo `config.py`:
+O sistema cria automaticamente uma planilha com as seguintes colunas:
 
-```python
-# PDVs cadastrados
-PDVS = [
-    "Supermercado ABC",
-    "Farmácia XYZ",
-    "Loja de Conveniência 123"
-]
+| Coluna | Descrição |
+|--------|-----------|
+| Data | Data do check-in (YYYY-MM-DD) |
+| Hora | Hora do check-in (HH:MM:SS) |
+| Promotor | Nome do promotor |
+| PDV | Nome do ponto de venda |
+| Valor Deslocamento | Valor em R$ |
+| Nº Entradas | Quantidade de entradas |
+| Observações | Notas adicionais |
+| Fotos | Links das fotos no Drive |
 
-# Promotores
-PROMOTORES = [
-    "João Silva",
-    "Maria Santos",
-    "Pedro Oliveira"
-]
+## 🤝 Contribuindo
 
-# Valores padrão
-VALOR_DESLOCAMENTO_PADRAO = 50.00
-MOEDA = "R$"
-
-# Configurações do Google Drive
-DRIVE_FOLDER_NAME = "PDV Control"
-SHEET_NAME = "Registros PDV"
-```
-
----
-
-## 📸 Screenshots
-
-### 📝 Tela de Check-in
-*Interface para registro de nova visita com todos os campos*
-
-### 📊 Dashboard de Registros
-*Visualização de todos os check-ins com filtros e busca*
-
-### 📸 Galeria de Fotos
-*Visualização organizada das fotos por promotor e data*
-
-### ⚙️ Painel de Configurações
-*Gerenciamento de PDVs, promotores e integrações*
-
----
-
-## 🔮 Próximas Funcionalidades
-
-- 🗺️ **Geolocalização**: Validação de check-in por GPS
-- 📱 **App Mobile**: Versão nativa para Android/iOS
-- 📊 **Analytics Avançado**: Dashboards interativos
-- 🔔 **Notificações**: Alertas de check-in pendentes
-- 💾 **Modo Offline**: Sincronização posterior
-- 🎯 **Metas e KPIs**: Acompanhamento de performance
-- 📈 **Relatórios PDF**: Exportação automática
-- 🤖 **IA para Análise**: Insights automatizados
-
----
-
-## 🤝 Contribuição
-
-Contribuições são sempre bem-vindas! 🎉
-
-### 📝 Como Contribuir
+Contribuições são bem-vindas! Para contribuir:
 
 1. Fork o projeto
 2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
@@ -271,61 +185,45 @@ Contribuições são sempre bem-vindas! 🎉
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-### 🐛 Reportar Bugs
+## 📝 Licença
 
-Encontrou um bug? Abra uma issue com:
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-- 📝 Descrição detalhada
-- 🖥️ Sistema operacional
-- 🐍 Versão do Python
-- 📸 Screenshots (se aplicável)
-- 🔄 Passos para reproduzir
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
-## 👨💻 Autor
+## 👤 Autor
 
 **Marcelo Torres**
 
-- 🌐 Website: seusite.com
-- 📧 Email: marcelotorres1982@gmail.com
-- 💼 LinkedIn: [https://www.linkedin.com/in/marcelo-t-554b8045/](https://www.linkedin.com/in/marcelo-t-554b8045/)
-- 🐙 GitHub: [https://github.com/marcelotorres1982](https://github.com/marcelotorres1982)
-
----
+- Portfolio: [marcelotorres1982.github.io](https://marcelotorres1982.github.io/)
+- LinkedIn: [marcelo-t-554b8045](https://www.linkedin.com/in/marcelo-t-554b8045/)
+- GitHub: [@marcelotorres1982](https://github.com/marcelotorres1982)
+- Email: marcelotorres1982@gmail.com
 
 ## 🙏 Agradecimentos
 
-- 🎨 **Streamlit** pela framework incrível
-- 💡 **Comunidade Python** pelo suporte
-- 🚀 **Google Cloud** pelas APIs robustas
-- 📍 **Promotores** que inspiraram este projeto
-- ✨ **Você** por usar o PDV Control!
+- [Streamlit](https://streamlit.io/) - Framework incrível para Python
+- [Google APIs](https://developers.google.com/) - Drive e Sheets APIs
+- Comunidade Python
 
----
+## 📈 Roadmap
+
+- [ ] Dashboard com gráficos e métricas
+- [ ] Exportação de relatórios em PDF
+- [ ] Notificações por email
+- [ ] App mobile (PWA)
+- [ ] Backup automático
+- [ ] Integração com WhatsApp
+
+## 🐛 Problemas Conhecidos
+
+Se encontrar problemas, por favor:
+1. Verifique se as APIs estão habilitadas no Google Cloud
+2. Confirme que o token não expirou
+3. Abra uma [issue](https://github.com/marcelotorres1982/pdv-control/issues) detalhando o problema
 
 ## 📞 Suporte
 
-Precisa de ajuda? Entre em contato:
-
-- 💬 **Issues**: [GitHub Issues](https://github.com/marcelotorres1982/pdv-control/issues)
-- 📧 **Email**: marcelotorres1982@gmail.com
-- 💭 **Discussões**: [GitHub Discussions](https://github.com/marcelotorres1982/pdv-control/discussions)
+Para suporte, abra uma issue no GitHub ou entre em contato via email.
 
 ---
 
-## 📊 Status do Projeto
-
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Last Commit](https://img.shields.io/badge/last%20commit-outubro%202025-green)
-
----
-
-© 2025 PDV Control. Todos os direitos reservados.
+**Desenvolvido com ❤️ por Marcelo Torres**
