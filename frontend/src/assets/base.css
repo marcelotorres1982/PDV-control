@@ -1,0 +1,16 @@
+:root {
+  --surface: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-border: #e2e8f0;
+  --surface-strong: #0f172a;
+  --brand: #1e88e5;
+  --brand-dark: #1565c0;
+  --accent: #ffb300;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}

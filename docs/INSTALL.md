@@ -1,400 +1,103 @@
-# 🚀 Guia de Instalação - PDV Control
+# 🚀 Guia de Instalação – SPA PDV Control
 
-Este guia detalha o processo completo de instalação e configuração do sistema PDV Control.
+Este guia cobre tudo o que você precisa para subir o frontend baseado em **Vue 3 + Vite + Tailwind**. Nenhum backend acompanha o projeto, então você pode apontar `VITE_API_BASE_URL` para qualquer serviço próprio (REST, GraphQL, BaaS, etc.).
 
 ---
 
 ## 📋 Pré-requisitos
 
-Antes de começar, certifique-se de ter instalado:
+| Ferramenta | Versão recomendada | Observações |
+|------------|--------------------|-------------|
+| Node.js    | 20.10+             | Testado com a imagem oficial dos Dev Containers |
+| npm        | 10+                | Use `pnpm` ou `yarn` se preferir, adaptando os comandos |
+| Git        | 2.40+              | Necessário para clonar o repo |
 
-- **Python 3.8 ou superior**
-- **pip** (gerenciador de pacotes Python)
-- **Git** (para clonar o repositório)
-- **Conta Google** (para integração com Drive e Sheets)
-
-### Verificando Instalações
-
-```bash
-# Verificar Python
-python --version
-# ou
-python3 --version
-
-# Verificar pip
-pip --version
-# ou
-pip3 --version
-
-# Verificar Git
-git --version
-```
+> Dica: `.nvmrc` não é necessário, mas é recomendável alinhar a versão de Node com o Dev Container (`node:22`).
 
 ---
 
-## 📥 Passo 1: Clonar o Repositório
+## 📥 1. Clonar o repositório
 
 ```bash
-# Clone o repositório
 git clone https://github.com/marcelotorres1982/pdv-control.git
-
-# Entre no diretório
 cd pdv-control
 ```
 
 ---
 
-## 🔧 Passo 2: Criar Ambiente Virtual (Recomendado)
-
-É altamente recomendado usar um ambiente virtual para isolar as dependências do projeto.
-
-### No Windows:
+## ⚙️ 2. Configurar variáveis do frontend
 
 ```bash
-# Criar ambiente virtual
-python -m venv venv
-
-# Ativar ambiente virtual
-venv\Scripts\activate
+cd frontend
+cp .env.example .env
 ```
 
-### No Linux/Mac:
+- Defina `VITE_API_BASE_URL` para o host das suas APIs.
+- Se não houver um serviço disponível ainda, mantenha um placeholder (`http://localhost:8000/api`, por exemplo) e use dados mockados.
+- (Opcional) Use `VITE_GOOGLE_OAUTH_URL` para apontar diretamente para o endpoint OAuth do Google quando seu backend ainda não expõe `/auth/google-login`.
+
+---
+
+## 📦 3. Instalar dependências
 
 ```bash
-# Criar ambiente virtual
-python3 -m venv venv
-
-# Ativar ambiente virtual
-source venv/bin/activate
+npm install
+# ou
+pnpm install
+# ou
+yarn install
 ```
 
 ---
 
-## 📦 Passo 3: Instalar Dependências
-
-Com o ambiente virtual ativado, instale as dependências:
+## 🧪 4. Scripts essenciais
 
 ```bash
-pip install -r requirements.txt
+npm run dev        # Vite Dev Server
+npm run build      # Build de produção (gera dist/)
+npm run preview    # Serve o build localmente
+npm run lint       # ESLint + Prettier
+npm run test:unit  # Vitest
+npm run test:e2e   # Cypress (usa o build + preview)
 ```
 
-### Instalação Individual (caso necessário)
-
-Se preferir instalar as bibliotecas individualmente:
-
-```bash
-pip install streamlit
-pip install google-auth google-auth-oauthlib google-auth-httplib2
-pip install google-api-python-client
-pip install pandas numpy pillow
-pip install python-dateutil pytz
-```
+> Execute `npm run lint` e `npm run test:unit` antes de abrir um PR.
 
 ---
 
-## 🔑 Passo 4: Configurar Google Cloud
+## 🔌 5. Conectando a sua API
 
-### 4.1 Criar Projeto no Google Cloud
+1. Exponha endpoints compatíveis com os clients existentes (`src/api/*.ts`). O contrato é simples e baseado em JSON.
+2. Ajuste `VITE_API_BASE_URL` no `.env`.
+3. Reinicie `npm run dev` para aplicar a nova configuração.
+4. Utilize o Vue Query Devtools para inspecionar o cache e validar as chamadas.
 
-1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
-2. Clique em "Criar Projeto"
-3. Digite um nome para o projeto (ex: "PDV Control")
-4. Clique em "Criar"
-
-### 4.2 Ativar APIs Necessárias
-
-1. No menu lateral, vá em **APIs e Serviços** → **Biblioteca**
-2. Procure e ative as seguintes APIs:
-   - **Google Drive API**
-   - **Google Sheets API**
-
-### 4.3 Criar Credenciais OAuth 2.0
-
-1. Vá em **APIs e Serviços** → **Credenciais**
-2. Clique em **+ CRIAR CREDENCIAIS**
-3. Selecione **ID do cliente OAuth**
-4. Configure a tela de consentimento OAuth (se solicitado):
-   - Tipo de usuário: **Externo**
-   - Nome do aplicativo: **PDV Control**
-   - Email de suporte: seu email
-   - Salve e continue
-5. Tipo de aplicativo: **Aplicativo para computador**
-6. Nome: **PDV Control Desktop**
-7. Clique em **CRIAR**
-8. Baixe o arquivo JSON das credenciais
-
-### 4.4 Configurar Credenciais no Projeto
-
-```bash
-# Criar pasta de credenciais
-mkdir credentials
-
-# Mover o arquivo baixado para a pasta e renomear
-mv ~/Downloads/client_secret_*.json credentials/credentials.json
-```
+Não há restrições sobre a tecnologia usada no servidor. Pode ser FastAPI, Express, Firebase Functions, Supabase, Airtable, etc. O importante é manter os mesmos caminhos/estruturas esperados pelo frontend.
 
 ---
 
-## 📁 Passo 5: Estrutura de Diretórios
-
-Crie as pastas necessárias:
-
-```bash
-# Windows
-mkdir data
-mkdir data\backups
-
-# Linux/Mac
-mkdir -p data/backups
-```
-
-A estrutura final deve ficar assim:
+## 🧱 Estrutura pós-instalação
 
 ```
 pdv-control/
-├── app.py
-├── database.py
-├── google_integration.py
-├── config.py
-├── utils.py
-├── requirements.txt
-├── README.md
-├── INSTALL.md
-├── .gitignore
-├── credentials/
-│   └── credentials.json
-└── data/
-    └── backups/
+├── frontend/
+│   ├── node_modules/
+│   ├── src/
+│   ├── vite.config.ts
+│   └── package-lock.json
+├── docs/
+└── ...
 ```
 
 ---
 
-## ⚙️ Passo 6: Configuração Inicial
-
-### 6.1 Editar Configurações (Opcional)
-
-Abra o arquivo `config.py` e ajuste conforme necessário:
-
-```python
-# Exemplos de configurações que você pode alterar
-
-# Adicionar/remover promotores
-PROMOTORES = [
-    "Seu Promotor 1",
-    "Seu Promotor 2",
-    # ...
-]
-
-# Adicionar/remover PDVs
-PDVS = [
-    "Seu PDV 1",
-    "Seu PDV 2",
-    # ...
-]
-
-# Valor padrão de deslocamento
-VALOR_DESLOCAMENTO_PADRAO = 50.00
-```
-
----
-
-## 🚀 Passo 7: Executar o Aplicativo
-
-```bash
-streamlit run app.py
-```
-
-O aplicativo abrirá automaticamente no seu navegador em `http://localhost:8501`
-
-### Primeira Execução
-
-1. Na primeira execução, clique em **"Conectar Google"** na sidebar
-2. Você será redirecionado para fazer login na sua conta Google
-3. Autorize o aplicativo a acessar o Google Drive e Sheets
-4. Após autorização, você será redirecionado de volta ao aplicativo
-
----
-
-## ✅ Verificação de Instalação
-
-Para verificar se tudo está funcionando:
-
-1. **Teste de Conexão**: Verifique se aparece "✅ Google Drive conectado" na sidebar
-2. **Teste de Check-in**: Faça um check-in de teste
-3. **Verificar Google Drive**: Acesse seu Drive e verifique se a pasta "PDV Control" foi criada
-4. **Verificar Google Sheets**: Verifique se a planilha "Registros PDV" foi criada
-
----
-
-## 🔧 Solução de Problemas
-
-### Erro: "credentials.json não encontrado"
-
-**Solução**: Certifique-se de que o arquivo está em `credentials/credentials.json`
-
-```bash
-# Verificar se o arquivo existe
-ls credentials/credentials.json
-# ou no Windows
-dir credentials\credentials.json
-```
-
-### Erro: "ModuleNotFoundError"
-
-**Solução**: Reinstale as dependências
-
-```bash
-pip install -r requirements.txt --upgrade
-```
-
-### Erro ao conectar com Google
-
-**Solução**: 
-1. Verifique se as APIs estão ativadas no Google Cloud Console
-2. Verifique se o arquivo `credentials.json` é válido
-3. Delete o arquivo `credentials/token.pickle` e tente novamente
-
-```bash
-rm credentials/token.pickle
-```
-
-### Porta 8501 já em uso
-
-**Solução**: Use uma porta diferente
-
-```bash
-streamlit run app.py --server.port 8502
-```
-
-### Erro de permissão no Google Drive
-
-**Solução**: 
-1. Vá em [Google Account Permissions](https://myaccount.google.com/permissions)
-2. Remova o acesso do "PDV Control"
-3. Conecte novamente no aplicativo
-
----
-
-## 🔄 Atualizações
-
-Para atualizar o projeto para a versão mais recente:
-
-```bash
-# Puxar últimas alterações
-git pull origin main
-
-# Atualizar dependências
-pip install -r requirements.txt --upgrade
-```
-
----
-
-## 🐳 Instalação com Docker (Avançado)
-
-Se você preferir usar Docker, aqui está um exemplo de `Dockerfile`:
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8501
-
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
-```
-
-**Comandos Docker:**
-
-```bash
-# Build da imagem
-docker build -t pdv-control .
-
-# Executar container
-docker run -p 8501:8501 -v $(pwd)/credentials:/app/credentials -v $(pwd)/data:/app/data pdv-control
-```
-
----
-
-## 📱 Acesso Remoto (Opcional)
-
-Para acessar o aplicativo de outros dispositivos na mesma rede:
-
-```bash
-streamlit run app.py --server.address 0.0.0.0
-```
-
-Então acesse de outro dispositivo usando: `http://IP_DO_SEU_COMPUTADOR:8501`
-
----
-
-## 🔒 Segurança
-
-### Proteção de Credenciais
-
-**⚠️ IMPORTANTE**: 
-
-- **NUNCA** commite o arquivo `credentials.json` no Git
-- **NUNCA** compartilhe suas credenciais
-- O arquivo `.gitignore` já está configurado para ignorar credenciais
-
-### Backup de Segurança
-
-Faça backup regular do arquivo `credentials.json` em local seguro.
-
----
-
-## 🆘 Suporte
-
-Se encontrar problemas durante a instalação:
-
-1. **Verifique os Issues**: [GitHub Issues](https://github.com/marcelotorres1982/pdv-control/issues)
-2. **Crie um novo Issue**: Descreva o problema detalhadamente
-3. **Email**: marcelotorres1982@gmail.com
-
----
-
-## ✨ Próximos Passos
-
-Após a instalação bem-sucedida:
-
-1. 📖 Leia o [README.md](README.md) para conhecer todas as funcionalidades
-2. ⚙️ Configure promotores e PDVs no arquivo `config.py`
-3. 📝 Faça seu primeiro check-in de teste
-4. 📊 Explore os relatórios e visualizações
-
----
-
-## 🎓 Recursos Adicionais
-
-### Documentação Oficial
-
-- [Streamlit Documentation](https://docs.streamlit.io/)
-- [Google Drive API](https://developers.google.com/drive)
-- [Google Sheets API](https://developers.google.com/sheets)
-
-### Tutoriais Recomendados
-
-- [Python Virtual Environments](https://docs.python.org/3/tutorial/venv.html)
-- [Google OAuth 2.0](https://developers.google.com/identity/protocols/oauth2)
-- [Streamlit Tutorial](https://docs.streamlit.io/library/get-started)
-
----
-
-## 🎉 Conclusão
-
-Parabéns! Você concluiu a instalação do PDV Control. 
-
-O sistema está pronto para uso! 🚀
-
----
-
-**Desenvolvido com ❤️ por Marcelo Torres**
-
-📧 marcelotorres1982@gmail.com  
-🐙 [GitHub](https://github.com/marcelotorres1982)  
-💼 [LinkedIn](https://www.linkedin.com/in/marcelo-t-554b8045/)
+## ✅ Checklist final
+
+- [ ] Node e npm instalados nas versões recomendadas.
+- [ ] Dependências do `frontend/` instaladas.
+- [ ] `.env` configurado com `VITE_API_BASE_URL`.
+- [ ] `npm run dev` servindo o frontend em `http://localhost:5173`.
+- [ ] `npm run lint` e `npm run test:unit` executados sem erros.
+- [ ] APIs externas mapeadas (mock ou serviço real) para alimentar os componentes.
+
+Pronto! Seu ambiente está preparado para evoluir o PDV Control apenas com HTML, Tailwind e Vue. Consulte `docs/QUICKSTART.md` para um resumo operacional e `docs/CONTRIBUTING.md` para o fluxo de contribuição.***

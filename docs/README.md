@@ -1,229 +1,142 @@
-# 📍 PDV Control - Sistema de Gestão de Check-ins
+# 📍 PDV Control – SPA Vue + Tailwind
 
-Sistema completo de gestão de check-ins para promotores de vendas, com integração ao Google Drive e Google Sheets.
+O PDV Control foi totalmente reescrito como uma **Single Page Application** construída com **Vue 3**, **Vite**, **Tailwind CSS**, **Pinia**, **Vue Router** e **@tanstack/vue-query**. Todo o legado em Python/Streamlit foi descartado e nenhuma implementação de backend acompanha este repositório – você é livre para conectar qualquer serviço HTTP compatível com os clients Axios já disponíveis em `src/api/`.
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://pdv-control.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com)
+[![Vue](https://img.shields.io/badge/Vue_3-42B883?style=for-the-badge&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-## 🚀 Demo
-
-**Aplicação em produção:** [https://pdv-control.streamlit.app/](https://pdv-control-gsvhalx8a6hdhhtsgfa4wd.streamlit.app/)
-
-## 📋 Sobre o Projeto
-
-O PDV Control foi desenvolvido para resolver o problema de registro e acompanhamento de visitas de promotores em pontos de venda. O sistema oferece:
-
-- ✅ **Check-in com geolocalização** - Registro automático da localização
-- 📸 **Upload múltiplo de fotos** - Armazenamento seguro no Google Drive
-- 📊 **Sincronização automática** - Dados salvos no Google Sheets em tempo real
-- 👥 **Gestão de promotores e PDVs** - Interface administrativa completa
-- 🔍 **Detecção de duplicados** - Identifica e remove check-ins duplicados
-- 💰 **Controle financeiro** - Rastreamento de valores de deslocamento
-
-## 🛠️ Tecnologias Utilizadas
-
-- **Python 3.9+**
-- **Streamlit** - Framework para interface web
-- **Google Drive API** - Armazenamento de fotos
-- **Google Sheets API** - Banco de dados em nuvem
-- **OAuth2** - Autenticação segura
-- **SQLite** - Banco de dados local para cache
-
-## 📦 Instalação
-
-### Pré-requisitos
-
-- Python 3.9 ou superior
-- Conta Google (para Google Drive e Sheets)
-- Projeto no Google Cloud Console
-
-### Passo 1: Clonar o repositório
-
-```bash
-git clone https://github.com/marcelotorres1982/pdv-control.git
-cd pdv-control
-```
-
-### Passo 2: Criar ambiente virtual
-
-```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# Linux/Mac
-source venv/bin/activate
-```
-
-### Passo 3: Instalar dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### Passo 4: Configurar Google Cloud
-
-1. Acesse o [Google Cloud Console](https://console.cloud.google.com/)
-2. Crie um novo projeto ou selecione um existente
-3. Ative as APIs:
-   - Google Drive API
-   - Google Sheets API
-4. Crie credenciais OAuth 2.0:
-   - Tipo: Desktop app
-   - Baixe o arquivo JSON
-5. Renomeie para `credentials.json` e coloque em `credentials/`
-
-### Passo 5: Executar localmente
-
-```bash
-streamlit run app.py
-```
-
-## 🔐 Configuração para Streamlit Cloud
-
-### 1. Autenticar localmente primeiro
-
-Execute a aplicação localmente e complete a autenticação OAuth2:
-
-```bash
-streamlit run app.py
-```
-
-### 2. Gerar token base64
-
-```bash
-# Linux/Mac
-base64 -w 0 credentials/token.pickle > token_base64.txt
-
-# Windows PowerShell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("credentials/token.pickle")) | Out-File -FilePath token_base64.txt -NoNewline
-```
-
-### 3. Configurar Secrets no Streamlit Cloud
-
-No painel do Streamlit Cloud, adicione em **Settings → Secrets**:
-
-```toml
-google_token_base64 = "COLE_O_TOKEN_AQUI"
-```
-
-## 📁 Estrutura do Projeto
-
-```
-pdv-control/
-├── app.py                      # Aplicação principal
-├── google_integration.py       # Integração com Google APIs
-├── database.py                 # Banco de dados local
-├── config.py                   # Configurações
-├── requirements.txt            # Dependências
-├── credentials/
-│   ├── credentials.json        # Credenciais OAuth2 (não commitar)
-│   └── token.pickle           # Token de acesso (não commitar)
-├── .streamlit/
-│   ├── config.toml            # Configurações do Streamlit
-│   └── secrets.toml           # Secrets locais (não commitar)
-└── README.md
-```
-
-## 🎯 Funcionalidades
-
-### Check-in
-- Seleção de promotor e PDV
-- Valor de deslocamento configurável
-- Número de entradas
-- Upload de múltiplas fotos
-- Observações opcionais
-
-### Visualização de Registros
-- Filtros por data, promotor e PDV
-- Estatísticas consolidadas
-- Detalhes completos de cada visita
-- Links para fotos no Drive
-
-### Galeria de Fotos
-- Visualização organizada por promotor e data
-- Links diretos para Google Drive
-- Preview de todas as fotos
-
-### Painel Administrativo
-- **Links:** Acesso rápido à planilha e pasta do Drive
-- **Promotores:** Adicionar e remover promotores
-- **PDVs:** Adicionar e remover pontos de venda
-- **Duplicados:** Detectar e remover check-ins duplicados
-
-## 🔒 Segurança
-
-- Autenticação OAuth2 com Google
-- Tokens criptografados
-- Acesso controlado via Google Account
-- Dados armazenados no Google Drive pessoal
-
-## 📊 Google Sheets
-
-O sistema cria automaticamente uma planilha com as seguintes colunas:
-
-| Coluna | Descrição |
-|--------|-----------|
-| Data | Data do check-in (YYYY-MM-DD) |
-| Hora | Hora do check-in (HH:MM:SS) |
-| Promotor | Nome do promotor |
-| PDV | Nome do ponto de venda |
-| Valor Deslocamento | Valor em R$ |
-| Nº Entradas | Quantidade de entradas |
-| Observações | Notas adicionais |
-| Fotos | Links das fotos no Drive |
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Para contribuir:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 👤 Autor
-
-**Marcelo Torres**
-
-- Portfolio: [marcelotorres1982.github.io](https://marcelotorres1982.github.io/)
-- LinkedIn: [marcelo-t-554b8045](https://www.linkedin.com/in/marcelo-t-554b8045/)
-- GitHub: [@marcelotorres1982](https://github.com/marcelotorres1982)
-- Email: marcelotorres1982@gmail.com
-
-## 🙏 Agradecimentos
-
-- [Streamlit](https://streamlit.io/) - Framework incrível para Python
-- [Google APIs](https://developers.google.com/) - Drive e Sheets APIs
-- Comunidade Python
-
-## 📈 Roadmap
-
-- [ ] Dashboard com gráficos e métricas
-- [ ] Exportação de relatórios em PDF
-- [ ] Notificações por email
-- [ ] App mobile (PWA)
-- [ ] Backup automático
-- [ ] Integração com WhatsApp
-
-## 🐛 Problemas Conhecidos
-
-Se encontrar problemas, por favor:
-1. Verifique se as APIs estão habilitadas no Google Cloud
-2. Confirme que o token não expirou
-3. Abra uma [issue](https://github.com/marcelotorres1982/pdv-control/issues) detalhando o problema
-
-## 📞 Suporte
-
-Para suporte, abra uma issue no GitHub ou entre em contato via email.
+> ✅ Repositório 100% frontend. Defina suas próprias APIs ou serviços (REST, GraphQL, BaaS, etc.) e configure o endpoint via `VITE_API_BASE_URL`.
 
 ---
 
-**Desenvolvido com ❤️ por Marcelo Torres**
+## 🎯 Visão Geral
+
+Mantendo o objetivo original — facilitar o controle de execuções em PDV com check-ins, uploads e dashboards — a nova versão concentra todo o trabalho na interface:
+
+- **Frontend (este repositório)**: SPA em Vue 3 + Tailwind, com Pinia, Vue Router e Vue Query.
+- **Serviço de dados externo (opcional)**: qualquer API acessível via HTTP/JSON que implemente os contratos de `src/api/`.
+
+Principais áreas já modeladas:
+
+- **Dashboard**: cards com indicadores, status das integrações com Google e últimos check-ins.
+- **Check-ins**: formulário multi-etapas, upload em lote e pré-visualização de fotos.
+- **Registros**: tabela responsiva com filtros persistidos.
+- **Galeria**: placeholders e layout para exibir imagens sincronizadas.
+- **Administração**: gestão de promotores/PDVs e integrações.
+
+---
+
+## 🛠️ Tecnologias
+
+- **Vue 3 (script setup + TypeScript)**
+- **Vite 7** para bundling/dev server
+- **Tailwind CSS 3.4** com design tokens customizados
+- **Pinia** para estado global
+- **Vue Router** para navegação declarativa
+- **@tanstack/vue-query** para chamadas HTTP com cache e revalidação
+- **Axios** como HTTP client
+- **Vitest + Vue Test Utils** (unit)
+- **Cypress 15** (E2E)
+
+---
+
+## 🚀 Instalação Rápida
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/marcelotorres1982/pdv-control.git
+cd pdv-control/frontend
+
+# 2. Variáveis de ambiente (apenas o frontend usa)
+cp .env.example .env
+# VITE_API_BASE_URL aponta para o seu serviço HTTP
+# VITE_GOOGLE_OAUTH_URL (opcional) abre diretamente a tela de login do Google quando não houver backend
+
+# 3. Dependências
+npm install
+
+# 4. Modo desenvolvimento
+npm run dev
+```
+
+Scripts disponíveis:
+
+| Script            | Descrição                                   |
+|-------------------|---------------------------------------------|
+| `npm run dev`     | Vite Dev Server (porta 5173 por padrão)     |
+| `npm run build`   | Build de produção (`dist/`)                 |
+| `npm run preview` | Servir o build local                        |
+| `npm run test:unit` | Vitest                                    |
+| `npm run test:e2e`   | Cypress com build                         |
+| `npm run lint`    | ESLint + Prettier                           |
+
+> Recomendado Node.js 20+. Se preferir pnpm ou yarn, adapte os comandos.
+> Dica: defina `VITE_GOOGLE_OAUTH_URL` quando quiser testar o botão “Entrar com conta Google” sem uma API própria.
+
+---
+
+## 📁 Estrutura Essencial
+
+```
+pdv-control/
+├── frontend/
+│   ├── src/
+│   │   ├── api/              # Clients Axios + tipagens
+│   │   ├── components/
+│   │   │   ├── base/         # Cartões, headers, feedback
+│   │   │   └── layout/       # Shell, sidebar, header
+│   │   ├── pages/            # Views do router
+│   │   ├── stores/           # Pinia stores
+│   │   ├── constants/        # Navegação, tokens, etc.
+│   │   └── main.ts           # Bootstrap do app
+│   ├── public/
+│   ├── .env.example
+│   ├── package.json
+│   └── tailwind.config.js
+└── docs/
+    ├── architecture-vue-migration.md
+    ├── INSTALL.md
+    ├── QUICKSTART.md
+    ├── CONTRIBUTING.md
+    └── ...
+```
+
+---
+
+## 🔌 Integrações e APIs
+
+- `src/api/` define o contrato das rotas necessárias (`/checkins`, `/stats`, `/promoters`, `/google/status`, etc.).
+- A SPA utiliza Axios + Vue Query; basta ajustar `VITE_API_BASE_URL` para apontar para o serviço escolhido (FastAPI, Node, Firebase, Supabase, Airtable, etc.).
+- Componentes exibem mensagens amigáveis quando o endpoint não está disponível, mantendo a UI útil mesmo com dados mockados.
+
+---
+
+## 🤝 Contribuindo
+
+1. Leia `docs/CONTRIBUTING.md` para entender o fluxo baseado em Node/Vite.
+2. Crie uma branch seguindo `tipo/descricao-curta`.
+3. Rode `npm run lint` e os testes relevantes antes do PR.
+4. Atualize a documentação sempre que alterar comportamento visível ou contratos de API.
+
+---
+
+## 🗺️ Roadmap Próximo
+
+- [ ] Integrar dados reais aos cards do Dashboard.
+- [ ] Implementar busca/ordenação avançada nos Registros.
+- [ ] Adicionar upload com arrastar-e-soltar e progresso visual.
+- [ ] Finalizar a galeria com lightbox e filtros.
+- [ ] Habilitar modo escuro usando Tailwind.
+- [ ] Evoluir o shell para suportar notificações e atalhos.
+
+---
+
+## 📄 Licença & Contato
+
+- Licença: MIT (`docs/MIT LICENSE.md`)
+- Autor original: [Marcelo Torres](https://github.com/marcelotorres1982)
+- Dúvidas ou sugestões: abra uma issue ou PR neste repositório.
+
+Vamos evoluir juntos a nova experiência do PDV Control – agora 100% HTML, Tailwind e Vue. 💙
