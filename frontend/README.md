@@ -68,3 +68,11 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+## Deploy na Vercel
+
+1. Garanta o `.env` com `VITE_API_BASE_URL` (e `VITE_GOOGLE_OAUTH_URL` se for usar OAuth Google). No Vercel, crie essas variaveis em **Project Settings > Environment Variables**.
+2. O repositorio ja inclui `vercel.json` na raiz. Basta importar o projeto no Vercel apontando para a raiz `PDV-control` (ele vai construir `frontend/` automaticamente).
+3. Build: `npm run build` (executada pelo Vercel). Saída esperada em `frontend/dist`.
+4. Routes de SPA: ja habilitadas no `vercel.json`, entao os caminhos do Vue Router (ex.: `/checkins`, `/admin`) funcionam via fallback para `index.html`.
+5. Para testar localmente o que sera servido, rode `npm run preview` apos o build.
